@@ -1,6 +1,14 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using PatientService.Data;
+using Microsoft.EntityFrameworkCore;
+using PatientService.Repositories;
+using PatientService.Services;
+using AutoMapper;
+using PatientService.Models.Entities;
+using PatientService.Models.DTOs;
+using PatientService.Mappings;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,6 +16,11 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+// Database Configuration
+builder.Services.AddDbContext<HospitalDbContext>(options =>
+    options.UseMySql(builder.Configuration.GetConnectionString("DefaultConnection"),
+    new MySqlServerVersion(new Version(8, 0, 0))));
 
 // JWT Authentication Configuration
 var jwtSettings = builder.Configuration.GetSection("JWT");
@@ -38,6 +51,15 @@ builder.Services.AddAuthentication(options =>
 });
 
 builder.Services.AddAuthorization();
+
+// Repository Registration
+builder.Services.AddScoped<IRepository<Patient>, Repository<Patient>>();
+
+// Service Registration
+builder.Services.AddScoped<IPatientService, PatientService.Services.PatientService>();
+
+// AutoMapper Configuration
+builder.Services.AddAutoMapper(typeof(MappingProfile));
 
 var app = builder.Build();
 

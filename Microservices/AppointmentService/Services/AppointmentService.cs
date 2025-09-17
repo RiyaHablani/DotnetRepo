@@ -14,7 +14,7 @@ namespace AppointmentService.Services
         private readonly PatientServiceClient _patientClient;
         private readonly IMapper _mapper;
         private readonly ILogger<AppointmentService> _logger;
-        private readonly AppointmentDbContext _context;
+        private readonly HospitalDbContext _context;
 
         public AppointmentService(
             IRepository<Appointment> appointmentRepository,
@@ -22,7 +22,7 @@ namespace AppointmentService.Services
             PatientServiceClient patientClient,
             IMapper mapper,
             ILogger<AppointmentService> logger,
-            AppointmentDbContext context)
+            HospitalDbContext context)
         {
             _appointmentRepository = appointmentRepository;
             _doctorClient = doctorClient;
@@ -77,8 +77,6 @@ namespace AppointmentService.Services
             try
             {
                 var appointment = await _context.Appointments
-                    .Include(a => a.Patient)
-                    .Include(a => a.Doctor)
                     .FirstOrDefaultAsync(a => a.Id == id && !a.IsDeleted);
 
                 return appointment == null ? null : _mapper.Map<AppointmentDto>(appointment);
@@ -121,10 +119,8 @@ namespace AppointmentService.Services
 
                 var createdAppointment = await _appointmentRepository.AddAsync(appointment);
 
-                // Load related entities for the response
+                // Load appointment for the response
                 var appointmentWithIncludes = await _context.Appointments
-                    .Include(a => a.Patient)
-                    .Include(a => a.Doctor)
                     .FirstAsync(a => a.Id == createdAppointment.Id);
 
                 _logger.LogInformation("Appointment created successfully. ID: {AppointmentId}, Patient: {PatientId}, Doctor: {DoctorId}", 
@@ -145,8 +141,6 @@ namespace AppointmentService.Services
             try
             {
                 var existingAppointment = await _context.Appointments
-                    .Include(a => a.Patient)
-                    .Include(a => a.Doctor)
                     .FirstOrDefaultAsync(a => a.Id == id && !a.IsDeleted);
 
                 if (existingAppointment == null)
@@ -187,7 +181,7 @@ namespace AppointmentService.Services
                 if (appointment == null || appointment.IsDeleted)
                     return false;
 
-                appointment.Status = AppointmentStatus.Cancelled;
+                appointment.Status = "Cancelled";
                 appointment.UpdatedAt = DateTime.UtcNow;
 
                 await _appointmentRepository.UpdateAsync(appointment);
@@ -202,13 +196,34 @@ namespace AppointmentService.Services
             }
         }
 
+        public async Task<bool> DeleteAppointmentAsync(int id)
+        {
+            try
+            {
+                var appointment = await _appointmentRepository.GetByIdAsync(id);
+                if (appointment == null || appointment.IsDeleted)
+                    return false;
+
+                appointment.IsDeleted = true;
+                appointment.UpdatedAt = DateTime.UtcNow;
+
+                await _appointmentRepository.UpdateAsync(appointment);
+
+                _logger.LogInformation("Appointment deleted successfully. ID: {AppointmentId}", id);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error deleting appointment with ID: {AppointmentId}", id);
+                throw;
+            }
+        }
+
         public async Task<IEnumerable<AppointmentDto>> GetAppointmentsByDoctorAsync(int doctorId, DateTime? date = null)
         {
             try
             {
                 var query = _context.Appointments
-                    .Include(a => a.Patient)
-                    .Include(a => a.Doctor)
                     .Where(a => a.DoctorId == doctorId && !a.IsDeleted);
 
                 if (date.HasValue)
@@ -236,8 +251,6 @@ namespace AppointmentService.Services
             try
             {
                 var appointments = await _context.Appointments
-                    .Include(a => a.Patient)
-                    .Include(a => a.Doctor)
                     .Where(a => a.PatientId == patientId && !a.IsDeleted)
                     .OrderBy(a => a.AppointmentDate)
                     .ToListAsync();
@@ -260,7 +273,7 @@ namespace AppointmentService.Services
                 var conflictingAppointments = await _context.Appointments
                     .Where(a => a.DoctorId == doctorId 
                         && !a.IsDeleted 
-                        && a.Status != AppointmentStatus.Cancelled
+                        && a.Status != "Cancelled"
                         && a.Id != excludeAppointmentId)
                     .Where(a => 
                         (appointmentDate >= a.AppointmentDate && appointmentDate < a.AppointmentDate.AddMinutes(a.Duration)) ||
@@ -281,9 +294,7 @@ namespace AppointmentService.Services
         {
             try
             {
-                var doctor = await _doctorRepository.GetByIdAsync(doctorId);
-                if (doctor == null || !doctor.IsActive)
-                    return new List<DateTime>();
+                // For now, assume doctor is available - in real implementation, check doctor service
 
                 var availableSlots = new List<DateTime>();
                 var startTime = date.Date.AddHours(9); // Start at 9 AM

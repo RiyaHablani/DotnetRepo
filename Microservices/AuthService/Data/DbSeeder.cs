@@ -1,4 +1,5 @@
 using AuthService.Models.Entities;
+using AuthService.Models.Enums;
 using BCrypt.Net;
 using Microsoft.EntityFrameworkCore;
 
@@ -6,7 +7,7 @@ namespace AuthService.Data
 {
     public static class DbSeeder
     {
-        public static async Task SeedAsync(AuthDbContext context)
+        public static async Task SeedAsync(HospitalDbContext context)
         {
             try
             {
@@ -33,46 +34,56 @@ namespace AuthService.Data
                     new Patient
                     {
                         Name = "John Smith",
+                        Email = "john.smith@email.com",
                         Age = 35,
                         Gender = "Male",
                         Address = "123 Main St, New York, NY",
                         CreatedAt = DateTime.UtcNow,
+                        UpdatedAt = DateTime.UtcNow,
                         IsDeleted = false
                     },
                 new Patient
                 {
                     Name = "Sarah Johnson",
+                    Email = "sarah.johnson@email.com",
                     Age = 28,
                     Gender = "Female",
                     Address = "456 Oak Ave, Los Angeles, CA",
                     CreatedAt = DateTime.UtcNow,
+                    UpdatedAt = DateTime.UtcNow,
                     IsDeleted = false
                 },
                 new Patient
                 {
                     Name = "Michael Brown",
+                    Email = "michael.brown@email.com",
                     Age = 42,
                     Gender = "Male",
                     Address = "789 Pine Rd, Chicago, IL",
                     CreatedAt = DateTime.UtcNow,
+                    UpdatedAt = DateTime.UtcNow,
                     IsDeleted = false
                 },
                 new Patient
                 {
                     Name = "Emily Davis",
+                    Email = "emily.davis@email.com",
                     Age = 31,
                     Gender = "Female",
                     Address = "321 Elm St, Houston, TX",
                     CreatedAt = DateTime.UtcNow,
+                    UpdatedAt = DateTime.UtcNow,
                     IsDeleted = false
                 },
                 new Patient
                 {
                     Name = "Robert Wilson",
+                    Email = "robert.wilson@email.com",
                     Age = 55,
                     Gender = "Male",
                     Address = "654 Maple Dr, Phoenix, AZ",
                     CreatedAt = DateTime.UtcNow,
+                    UpdatedAt = DateTime.UtcNow,
                     IsDeleted = false
                 }
                 };
@@ -85,42 +96,54 @@ namespace AuthService.Data
                     Name = "Dr. James Anderson",
                     Specialization = "Cardiology",
                     Email = "dr.anderson@hospital.com",
-                    IsActive = true
+                    IsActive = true,
+                    CreatedAt = DateTime.UtcNow,
+                    UpdatedAt = DateTime.UtcNow
                 },
                 new Doctor
                 {
                     Name = "Dr. Lisa Martinez",
                     Specialization = "Pediatrics",
                     Email = "dr.martinez@hospital.com",
-                    IsActive = true
+                    IsActive = true,
+                    CreatedAt = DateTime.UtcNow,
+                    UpdatedAt = DateTime.UtcNow
                 },
                 new Doctor
                 {
                     Name = "Dr. David Thompson",
                     Specialization = "Orthopedics",
                     Email = "dr.thompson@hospital.com",
-                    IsActive = true
+                    IsActive = true,
+                    CreatedAt = DateTime.UtcNow,
+                    UpdatedAt = DateTime.UtcNow
                 },
                 new Doctor
                 {
                     Name = "Dr. Jennifer Lee",
                     Specialization = "Dermatology",
                     Email = "dr.lee@hospital.com",
-                    IsActive = true
+                    IsActive = true,
+                    CreatedAt = DateTime.UtcNow,
+                    UpdatedAt = DateTime.UtcNow
                 },
                 new Doctor
                 {
                     Name = "Dr. Christopher Garcia",
                     Specialization = "Neurology",
                     Email = "dr.garcia@hospital.com",
-                    IsActive = true
+                    IsActive = true,
+                    CreatedAt = DateTime.UtcNow,
+                    UpdatedAt = DateTime.UtcNow
                 },
                 new Doctor
                 {
                     Name = "Dr. Amanda White",
                     Specialization = "Internal Medicine",
                     Email = "dr.white@hospital.com",
-                    IsActive = true
+                    IsActive = true,
+                    CreatedAt = DateTime.UtcNow,
+                    UpdatedAt = DateTime.UtcNow
                 }
             };
 

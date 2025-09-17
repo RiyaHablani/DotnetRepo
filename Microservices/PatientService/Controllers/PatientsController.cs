@@ -1,48 +1,105 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+using PatientService.Models.DTOs;
+using PatientService.Services;
+using System.Security.Claims;
 
 namespace PatientService.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize] // Require authentication
     public class PatientsController : ControllerBase
     {
-        private static readonly List<Patient> _patients = new()
-        {
-            new Patient { Id = 1, Name = "John Smith", Age = 35, Gender = "Male", Address = "123 Main St, New York, NY" },
-            new Patient { Id = 2, Name = "Sarah Johnson", Age = 28, Gender = "Female", Address = "456 Oak Ave, Los Angeles, CA" },
-            new Patient { Id = 3, Name = "Michael Brown", Age = 42, Gender = "Male", Address = "789 Pine Rd, Chicago, IL" }
-        };
+        private readonly IPatientService _patientService;
 
-        [HttpGet]
-        public IActionResult GetAllPatients()
+        public PatientsController(IPatientService patientService)
         {
-            return Ok(_patients);
+            _patientService = patientService;
         }
 
-        [HttpGet("{id}")]
-        public IActionResult GetPatient(int id)
+        // GET: api/patients
+        [HttpGet]
+        public async Task<IActionResult> GetAllPatients()
         {
-            var patient = _patients.FirstOrDefault(p => p.Id == id);
+            var patients = await _patientService.GetAllPatientsAsync();
+            return Ok(patients);
+        }
+
+        // GET: api/patients/{id}
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetPatient(int id)
+        {
+            var patient = await _patientService.GetPatientByIdAsync(id);
             if (patient == null)
                 return NotFound();
+
             return Ok(patient);
         }
 
+        // POST: api/patients
         [HttpPost]
-        public IActionResult CreatePatient([FromBody] Patient patient)
+        [Authorize(Roles = "Admin,Receptionist")] // Only admins and receptionists can create patients
+        public async Task<IActionResult> CreatePatient([FromBody] CreatePatientDto createDto)
         {
-            patient.Id = _patients.Count + 1;
-            _patients.Add(patient);
-            return CreatedAtAction(nameof(GetPatient), new { id = patient.Id }, patient);
-        }
-    }
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
 
-    public class Patient
-    {
-        public int Id { get; set; }
-        public string Name { get; set; } = string.Empty;
-        public int Age { get; set; }
-        public string Gender { get; set; } = string.Empty;
-        public string Address { get; set; } = string.Empty;
+            try
+            {
+                var patient = await _patientService.CreatePatientAsync(createDto);
+                return CreatedAtAction(nameof(GetPatient), new { id = patient.Id }, patient);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        // PUT: api/patients/{id}
+        [HttpPut("{id}")]
+        [Authorize(Roles = "Admin,Receptionist")] // Only admins and receptionists can update patients
+        public async Task<IActionResult> UpdatePatient(int id, [FromBody] UpdatePatientDto updateDto)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            try
+            {
+                var patient = await _patientService.UpdatePatientAsync(id, updateDto);
+                if (patient == null)
+                    return NotFound();
+
+                return Ok(patient);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        // DELETE: api/patients/{id}
+        [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")] // Only admins can delete patients
+        public async Task<IActionResult> DeletePatient(int id)
+        {
+            var result = await _patientService.DeletePatientAsync(id);
+            if (!result)
+                return NotFound();
+
+            return NoContent();
+        }
+
+        // Helper methods
+        private string GetUserRole()
+        {
+            return User.FindFirst(ClaimTypes.Role)?.Value ?? "Patient";
+        }
+
+        private int GetPatientIdFromToken()
+        {
+            var patientIdClaim = User.FindFirst("PatientId")?.Value;
+            return int.TryParse(patientIdClaim, out var patientId) ? patientId : 0;
+        }
     }
 }

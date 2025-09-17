@@ -1,6 +1,11 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using AuthService.Data;
+using Microsoft.EntityFrameworkCore;
+using AuthService.Repositories;
+using AuthService.Services;
+using AuthService.Models.Entities;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,6 +13,17 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+// Database Configuration
+builder.Services.AddDbContext<HospitalDbContext>(options =>
+    options.UseMySql(builder.Configuration.GetConnectionString("DefaultConnection"),
+    new MySqlServerVersion(new Version(8, 0, 0))));
+
+// Repository Registration
+builder.Services.AddScoped<IRepository<User>, Repository<User>>();
+
+// Service Registration
+builder.Services.AddScoped<IAuthService, AuthService.Services.AuthService>();
 
 // JWT Authentication Configuration
 var jwtSettings = builder.Configuration.GetSection("JWT");
@@ -52,5 +68,12 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
+
+// Seed database
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<HospitalDbContext>();
+    await DbSeeder.SeedAsync(context);
+}
 
 app.Run();

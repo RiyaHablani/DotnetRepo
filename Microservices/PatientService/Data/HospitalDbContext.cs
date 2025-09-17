@@ -3,9 +3,9 @@ using PatientService.Models.Entities;
 
 namespace PatientService.Data
 {
-    public class PatientDbContext : DbContext
+    public class HospitalDbContext : DbContext
     {
-        public PatientDbContext(DbContextOptions<PatientDbContext> options) : base(options)
+        public HospitalDbContext(DbContextOptions<HospitalDbContext> options) : base(options)
         {
         }
 

@@ -7,10 +7,10 @@ namespace AuthService.Repositories
 {
     public class Repository<T> : IRepository<T> where T : class
     {
-        protected readonly AuthDbContext _context;
+        protected readonly HospitalDbContext _context;
         protected readonly DbSet<T> _dbSet;
 
-        public Repository(AuthDbContext context)
+        public Repository(HospitalDbContext context)
         {
             _context = context;
             _dbSet = context.Set<T>();
@@ -56,13 +56,14 @@ namespace AuthService.Repositories
             return entity;
         }
 
-        public async Task UpdateAsync(T entity)
+        public async Task<T> UpdateAsync(T entity)
         {
             _dbSet.Update(entity);
             await _context.SaveChangesAsync();
+            return entity;
         }
 
-        public async Task DeleteAsync(int id)
+        public async Task<bool> DeleteAsync(int id)
         {
             if (typeof(T) == typeof(Patient))
             {
@@ -71,7 +72,9 @@ namespace AuthService.Repositories
                 {
                     patient.IsDeleted = true; // Soft delete
                     await _context.SaveChangesAsync();
+                    return true;
                 }
+                return false;
             }
             else if (typeof(T) == typeof(Doctor))
             {
@@ -80,8 +83,11 @@ namespace AuthService.Repositories
                 {
                     doctor.IsActive = false; // Soft delete
                     await _context.SaveChangesAsync();
+                    return true;
                 }
+                return false;
             }
+            return false;
         }
 
         public async Task<bool> ExistsAsync(int id)

@@ -3,9 +3,9 @@ using DoctorService.Models.Entities;
 
 namespace DoctorService.Data
 {
-    public class DoctorDbContext : DbContext
+    public class HospitalDbContext : DbContext
     {
-        public DoctorDbContext(DbContextOptions<DoctorDbContext> options) : base(options)
+        public HospitalDbContext(DbContextOptions<HospitalDbContext> options) : base(options)
         {
         }
 
@@ -21,7 +21,8 @@ namespace DoctorService.Data
                 entity.HasKey(e => e.Id);
                 entity.Property(e => e.Name).IsRequired().HasMaxLength(100);
                 entity.Property(e => e.Specialization).IsRequired().HasMaxLength(50);
-                entity.Property(e => e.Email).IsRequired().HasMaxLength(100);
+                entity.Property(e => e.CreatedAt).IsRequired();
+                entity.Property(e => e.UpdatedAt).IsRequired();
                 entity.Property(e => e.IsActive).IsRequired();
             });
         }

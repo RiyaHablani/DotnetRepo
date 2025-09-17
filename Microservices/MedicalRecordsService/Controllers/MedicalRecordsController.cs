@@ -31,7 +31,7 @@ namespace MedicalRecordsService.Controllers
                 var patientIdFromToken = GetPatientIdFromToken();
                 if (patientIdFromToken != patientId)
                 {
-                    return Forbid("Patients can only view their own medical records.");
+                    return Forbid();
                 }
             }
 
@@ -61,7 +61,7 @@ namespace MedicalRecordsService.Controllers
                 var patientIdFromToken = GetPatientIdFromToken();
                 if (patientIdFromToken != record.PatientId)
                 {
-                    return Forbid("Patients can only view their own medical records.");
+                    return Forbid();
                 }
             }
 

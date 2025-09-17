@@ -9,7 +9,7 @@ namespace AppointmentService.Services
         public PatientServiceClient(HttpClient httpClient)
         {
             _httpClient = httpClient;
-            _httpClient.BaseAddress = new Uri("http://localhost:5003");
+            _httpClient.BaseAddress = new Uri("http://localhost:5002");
         }
         
         public async Task<PatientDto?> GetPatientAsync(int patientId)
