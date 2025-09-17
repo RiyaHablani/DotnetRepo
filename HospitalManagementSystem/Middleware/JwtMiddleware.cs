@@ -89,6 +89,10 @@ namespace HospitalManagementSystem.Middleware
                     }
                 }
             }
+            catch (SecurityTokenExpiredException ex)
+            {
+                _logger.LogWarning("JWT token expired: {Message}", ex.Message);
+            }
             catch (SecurityTokenException ex)
             {
                 _logger.LogWarning("Invalid JWT token: {Message}", ex.Message);

@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using HospitalManagementSystem.Models.DTOs;
 using HospitalManagementSystem.Services;
@@ -6,6 +7,7 @@ namespace HospitalManagementSystem.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class PatientsController : ControllerBase
     {
         private readonly IPatientService _patientService;

@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using HospitalManagementSystem.Models.DTOs;
 using HospitalManagementSystem.Services;
@@ -76,6 +77,26 @@ namespace HospitalManagementSystem.Controllers
                 _logger.LogError(ex, "Error during registration for user: {Username}", registerDto.Username);
                 return StatusCode(500, new { message = "An error occurred during registration" });
             }
+        }
+
+        /// <summary>
+        /// Test authentication endpoint
+        /// </summary>
+        /// <returns>User information if authenticated</returns>
+        [HttpGet("test")]
+        [Authorize]
+        public IActionResult TestAuth()
+        {
+            var userId = HttpContext.Items["UserId"];
+            var userRole = HttpContext.Items["UserRole"];
+            var username = HttpContext.Items["User"]?.ToString();
+            
+            return Ok(new { 
+                message = "Authentication working", 
+                userId = userId, 
+                userRole = userRole,
+                username = username
+            });
         }
     }
 }

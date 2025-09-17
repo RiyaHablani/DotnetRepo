@@ -137,9 +137,9 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-// Add middleware
-app.UseMiddleware<JwtMiddleware>();
+// Add middleware in correct order
 app.UseAuthentication();
+app.UseMiddleware<JwtMiddleware>();
 app.UseAuthorization();
 
 app.MapControllers();
