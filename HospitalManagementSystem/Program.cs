@@ -147,8 +147,21 @@ app.MapControllers();
 // Seed the database
 using (var scope = app.Services.CreateScope())
 {
-    var context = scope.ServiceProvider.GetRequiredService<HospitalDbContext>();
-    await DbSeeder.SeedAsync(context);
+    try
+    {
+        var context = scope.ServiceProvider.GetRequiredService<HospitalDbContext>();
+        var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+        
+        logger.LogInformation("Starting database seeding...");
+        await DbSeeder.SeedAsync(context);
+        logger.LogInformation("Database seeding completed successfully.");
+    }
+    catch (Exception ex)
+    {
+        var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "An error occurred while seeding the database.");
+        throw;
+    }
 }
 
 app.Run();

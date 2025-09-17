@@ -1,5 +1,6 @@
 using HospitalManagementSystem.Models.Entities;
 using BCrypt.Net;
+using Microsoft.EntityFrameworkCore;
 
 namespace HospitalManagementSystem.Data
 {
@@ -7,25 +8,37 @@ namespace HospitalManagementSystem.Data
     {
         public static async Task SeedAsync(HospitalDbContext context)
         {
-            // Ensure database is created
-            await context.Database.EnsureCreatedAsync();
-
-            // Check if data already exists
-            if (context.Patients.Any() || context.Doctors.Any())
-                return; // Data already seeded
-
-            // Seed Patients
-            var patients = new List<Patient>
+            try
             {
-                new Patient
+                // Ensure database exists and apply migrations
+                await context.Database.EnsureCreatedAsync();
+                
+                // Apply any pending migrations if database already existed
+                var pendingMigrations = await context.Database.GetPendingMigrationsAsync();
+                if (pendingMigrations.Any())
                 {
-                    Name = "John Smith",
-                    Age = 35,
-                    Gender = "Male",
-                    Address = "123 Main St, New York, NY",
-                    CreatedAt = DateTime.UtcNow,
-                    IsDeleted = false
-                },
+                    await context.Database.MigrateAsync();
+                }
+                
+                // Check if data already exists
+                var patientCount = await context.Patients.CountAsync();
+                var doctorCount = await context.Doctors.CountAsync();
+                
+                if (patientCount > 0 || doctorCount > 0)
+                    return; // Data already seeded
+
+                // Seed Patients
+                var patients = new List<Patient>
+                {
+                    new Patient
+                    {
+                        Name = "John Smith",
+                        Age = 35,
+                        Gender = "Male",
+                        Address = "123 Main St, New York, NY",
+                        CreatedAt = DateTime.UtcNow,
+                        IsDeleted = false
+                    },
                 new Patient
                 {
                     Name = "Sarah Johnson",
@@ -62,10 +75,10 @@ namespace HospitalManagementSystem.Data
                     CreatedAt = DateTime.UtcNow,
                     IsDeleted = false
                 }
-            };
+                };
 
-            // Seed Doctors
-            var doctors = new List<Doctor>
+                // Seed Doctors
+                var doctors = new List<Doctor>
             {
                 new Doctor
                 {
@@ -111,15 +124,15 @@ namespace HospitalManagementSystem.Data
                 }
             };
 
-            // Add to context
-            await context.Patients.AddRangeAsync(patients);
-            await context.Doctors.AddRangeAsync(doctors);
+                // Add to context
+                await context.Patients.AddRangeAsync(patients);
+                await context.Doctors.AddRangeAsync(doctors);
 
-            // Save changes to get IDs
-            await context.SaveChangesAsync();
+                // Save changes to get IDs
+                await context.SaveChangesAsync();
 
-            // Seed Users with hashed passwords
-            var users = new List<User>
+                // Seed Users with hashed passwords
+                var users = new List<User>
             {
                 new User
                 {
@@ -177,10 +190,10 @@ namespace HospitalManagementSystem.Data
                 }
             };
 
-            await context.Users.AddRangeAsync(users);
+                await context.Users.AddRangeAsync(users);
 
-            // Seed Sample Appointments
-            var appointments = new List<Appointment>
+                // Seed Sample Appointments
+                var appointments = new List<Appointment>
             {
                 new Appointment
                 {
@@ -217,10 +230,15 @@ namespace HospitalManagementSystem.Data
                 }
             };
 
-            await context.Appointments.AddRangeAsync(appointments);
+                await context.Appointments.AddRangeAsync(appointments);
 
-            // Final save
-            await context.SaveChangesAsync();
+                // Final save
+                await context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException("Failed to seed database", ex);
+            }
         }
     }
 }
