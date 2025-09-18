@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using AppointmentService.Models.Entities;
+using AppointmentService.Models.Enums;
 
 namespace AppointmentService.Data
 {
@@ -21,7 +22,7 @@ namespace AppointmentService.Data
                 entity.HasKey(e => e.Id);
                 entity.Property(e => e.AppointmentDate).IsRequired();
                 entity.Property(e => e.Duration).IsRequired().HasDefaultValue(30);
-                entity.Property(e => e.Status).IsRequired().HasDefaultValue("Scheduled");
+                entity.Property(e => e.Status).IsRequired().HasDefaultValue(AppointmentStatus.Scheduled);
                 entity.Property(e => e.CreatedAt).IsRequired();
                 entity.Property(e => e.UpdatedAt).IsRequired();
                 entity.Property(e => e.IsDeleted).IsRequired().HasDefaultValue(false);

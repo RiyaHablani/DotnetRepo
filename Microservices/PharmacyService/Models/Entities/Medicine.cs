@@ -45,3 +45,4 @@ namespace PharmacyService.Models.Entities
         public bool IsDeleted { get; set; } = false;
     }
 }
+

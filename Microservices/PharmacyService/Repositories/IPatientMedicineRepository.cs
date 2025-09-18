@@ -9,3 +9,5 @@ namespace PharmacyService.Repositories
         Task<PatientMedicine?> GetPatientMedicineWithDetailsAsync(int id);
     }
 }
+
+

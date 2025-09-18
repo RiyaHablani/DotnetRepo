@@ -14,13 +14,6 @@ namespace AuthService.Data
                 // Ensure database exists and apply migrations
                 await context.Database.EnsureCreatedAsync();
                 
-                // Apply any pending migrations if database already existed
-                var pendingMigrations = await context.Database.GetPendingMigrationsAsync();
-                if (pendingMigrations.Any())
-                {
-                    await context.Database.MigrateAsync();
-                }
-                
                 // Check if data already exists
                 var patientCount = await context.Patients.CountAsync();
                 var doctorCount = await context.Doctors.CountAsync();

@@ -18,3 +18,5 @@ namespace AppointmentService.Models.DTOs
         public int Duration { get; set; }
     }
 }
+
+

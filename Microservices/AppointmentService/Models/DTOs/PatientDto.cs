@@ -10,3 +10,5 @@ namespace AppointmentService.Models.DTOs
         public string? Address { get; set; }
     }
 }
+
+

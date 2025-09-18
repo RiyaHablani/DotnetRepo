@@ -17,7 +17,7 @@ builder.Services.AddSwaggerGen();
 // Database Configuration
 builder.Services.AddDbContext<HospitalDbContext>(options =>
     options.UseMySql(builder.Configuration.GetConnectionString("DefaultConnection"),
-    new MySqlServerVersion(new Version(8, 0, 0))));
+    new MySqlServerVersion(new Version(9, 4, 0))));
 
 // Repository Registration
 builder.Services.AddScoped<IRepository<User>, Repository<User>>();

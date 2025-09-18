@@ -75,4 +75,11 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 
+// Ensure database is created
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<HospitalDbContext>();
+    await context.Database.EnsureCreatedAsync();
+}
+
 app.Run();

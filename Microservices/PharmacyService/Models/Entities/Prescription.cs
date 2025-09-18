@@ -40,3 +40,4 @@ namespace PharmacyService.Models.Entities
         public List<PatientMedicine> PatientMedicines { get; set; } = new List<PatientMedicine>();
     }
 }
+

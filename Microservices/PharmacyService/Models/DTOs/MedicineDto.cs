@@ -17,3 +17,4 @@ namespace PharmacyService.Models.DTOs
         public bool IsExpired => ExpiryDate < DateTime.UtcNow;
     }
 }
+

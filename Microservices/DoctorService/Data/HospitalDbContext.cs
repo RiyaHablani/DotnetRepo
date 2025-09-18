@@ -1,5 +1,5 @@
-using Microsoft.EntityFrameworkCore;
 using DoctorService.Models.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace DoctorService.Data
 {
@@ -20,10 +20,14 @@ namespace DoctorService.Data
             {
                 entity.HasKey(e => e.Id);
                 entity.Property(e => e.Name).IsRequired().HasMaxLength(100);
-                entity.Property(e => e.Specialization).IsRequired().HasMaxLength(50);
+                entity.Property(e => e.Specialization).IsRequired().HasMaxLength(100);
+                entity.Property(e => e.Email).IsRequired().HasMaxLength(100);
+                entity.Property(e => e.IsActive).IsRequired();
                 entity.Property(e => e.CreatedAt).IsRequired();
                 entity.Property(e => e.UpdatedAt).IsRequired();
-                entity.Property(e => e.IsActive).IsRequired();
+
+                // Add unique constraint on email
+                entity.HasIndex(e => e.Email).IsUnique();
             });
         }
     }

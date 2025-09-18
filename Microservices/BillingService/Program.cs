@@ -75,8 +75,26 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+// Add health check endpoint (no auth required)
+app.MapGet("/health", () => new { 
+    Status = "Healthy", 
+    Service = "BillingService", 
+    Timestamp = DateTime.UtcNow,
+    Database = "Connected"
+});
+
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 
+// Seed database on startup
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<BillingDbContext>();
+    await DbSeeder.SeedDataAsync(context);
+}
+
 app.Run();
+
+

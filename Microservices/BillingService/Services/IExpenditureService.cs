@@ -12,3 +12,5 @@ namespace BillingService.Services
         Task<IEnumerable<ExpenditureDto>> SearchExpendituresAsync(ExpenditureSearchDto searchDto);
     }
 }
+
+

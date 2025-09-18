@@ -15,3 +15,4 @@ namespace PharmacyService.Models.DTOs
         public List<PatientMedicineDto> PatientMedicines { get; set; } = new List<PatientMedicineDto>();
     }
 }
+

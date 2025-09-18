@@ -15,6 +15,11 @@ namespace DoctorService.Models.Entities
         public string Specialization { get; set; } = string.Empty;
         
         [Required]
+        [EmailAddress]
+        [MaxLength(100)]
+        public string Email { get; set; } = string.Empty;
+        
+        [Required]
         public bool IsActive { get; set; } = true;
         
         [Required]
@@ -24,3 +29,5 @@ namespace DoctorService.Models.Entities
         public DateTime UpdatedAt { get; set; }
     }
 }
+
+

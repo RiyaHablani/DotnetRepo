@@ -9,3 +9,5 @@ namespace AuthService.Models.Enums
         Receptionist = 5
     }
 }
+
+

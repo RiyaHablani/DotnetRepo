@@ -5,10 +5,15 @@ namespace PharmacyService.Models.DTOs
     public class UpdatePrescriptionStatusDto
     {
         [Required]
-        [MaxLength(50)]
-        public string Status { get; set; } = string.Empty; // Pending, Filled, Cancelled
+        [StringLength(50)]
+        public string Status { get; set; } = string.Empty;
         
-        [MaxLength(100)]
-        public string? FilledBy { get; set; } // Pharmacist name
+        [StringLength(100)]
+        public string? FilledBy { get; set; }
+        
+        public DateTime? FilledDate { get; set; }
+        
+        [StringLength(500)]
+        public string? Notes { get; set; }
     }
 }

@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using AppointmentService.Data;
 using AppointmentService.Models.DTOs;
 using AppointmentService.Models.Entities;
+using AppointmentService.Models.Enums;
 using AppointmentService.Repositories;
 
 namespace AppointmentService.Services
@@ -79,7 +80,26 @@ namespace AppointmentService.Services
                 var appointment = await _context.Appointments
                     .FirstOrDefaultAsync(a => a.Id == id && !a.IsDeleted);
 
-                return appointment == null ? null : _mapper.Map<AppointmentDto>(appointment);
+                if (appointment == null)
+                    return null;
+
+                // Fetch patient and doctor details
+                var patient = await _patientClient.GetPatientAsync(appointment.PatientId);
+                var doctor = await _doctorClient.GetDoctorAsync(appointment.DoctorId);
+
+                return new AppointmentDto
+                {
+                    Id = appointment.Id,
+                    PatientId = appointment.PatientId,
+                    PatientName = patient?.Name ?? "Unknown",
+                    DoctorId = appointment.DoctorId,
+                    DoctorName = doctor?.Name ?? "Unknown",
+                    DoctorSpecialization = doctor?.Specialization ?? "Unknown",
+                    AppointmentDate = appointment.AppointmentDate,
+                    Duration = appointment.Duration,
+                    Status = appointment.Status,
+                    CreatedAt = appointment.CreatedAt
+                };
             }
             catch (Exception ex)
             {
@@ -181,7 +201,7 @@ namespace AppointmentService.Services
                 if (appointment == null || appointment.IsDeleted)
                     return false;
 
-                appointment.Status = "Cancelled";
+                appointment.Status = AppointmentStatus.Cancelled;
                 appointment.UpdatedAt = DateTime.UtcNow;
 
                 await _appointmentRepository.UpdateAsync(appointment);
@@ -237,7 +257,29 @@ namespace AppointmentService.Services
                     .OrderBy(a => a.AppointmentDate)
                     .ToListAsync();
 
-                return _mapper.Map<IEnumerable<AppointmentDto>>(appointments);
+                var appointmentDtos = new List<AppointmentDto>();
+                
+                foreach (var appointment in appointments)
+                {
+                    var patient = await _patientClient.GetPatientAsync(appointment.PatientId);
+                    var doctor = await _doctorClient.GetDoctorAsync(appointment.DoctorId);
+                    
+                    appointmentDtos.Add(new AppointmentDto
+                    {
+                        Id = appointment.Id,
+                        PatientId = appointment.PatientId,
+                        PatientName = patient?.Name ?? "Unknown",
+                        DoctorId = appointment.DoctorId,
+                        DoctorName = doctor?.Name ?? "Unknown",
+                        DoctorSpecialization = doctor?.Specialization ?? "Unknown",
+                        AppointmentDate = appointment.AppointmentDate,
+                        Duration = appointment.Duration,
+                        Status = appointment.Status,
+                        CreatedAt = appointment.CreatedAt
+                    });
+                }
+
+                return appointmentDtos;
             }
             catch (Exception ex)
             {
@@ -255,7 +297,29 @@ namespace AppointmentService.Services
                     .OrderBy(a => a.AppointmentDate)
                     .ToListAsync();
 
-                return _mapper.Map<IEnumerable<AppointmentDto>>(appointments);
+                var appointmentDtos = new List<AppointmentDto>();
+                
+                foreach (var appointment in appointments)
+                {
+                    var patient = await _patientClient.GetPatientAsync(appointment.PatientId);
+                    var doctor = await _doctorClient.GetDoctorAsync(appointment.DoctorId);
+                    
+                    appointmentDtos.Add(new AppointmentDto
+                    {
+                        Id = appointment.Id,
+                        PatientId = appointment.PatientId,
+                        PatientName = patient?.Name ?? "Unknown",
+                        DoctorId = appointment.DoctorId,
+                        DoctorName = doctor?.Name ?? "Unknown",
+                        DoctorSpecialization = doctor?.Specialization ?? "Unknown",
+                        AppointmentDate = appointment.AppointmentDate,
+                        Duration = appointment.Duration,
+                        Status = appointment.Status,
+                        CreatedAt = appointment.CreatedAt
+                    });
+                }
+
+                return appointmentDtos;
             }
             catch (Exception ex)
             {
@@ -273,7 +337,7 @@ namespace AppointmentService.Services
                 var conflictingAppointments = await _context.Appointments
                     .Where(a => a.DoctorId == doctorId 
                         && !a.IsDeleted 
-                        && a.Status != "Cancelled"
+                        && a.Status != AppointmentStatus.Cancelled
                         && a.Id != excludeAppointmentId)
                     .Where(a => 
                         (appointmentDate >= a.AppointmentDate && appointmentDate < a.AppointmentDate.AddMinutes(a.Duration)) ||

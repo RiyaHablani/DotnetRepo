@@ -46,3 +46,5 @@ namespace PatientService.Models.Entities
         public bool IsDeleted { get; set; } = false;
     }
 }
+
+

@@ -33,3 +33,5 @@ namespace PatientService.Models.DTOs
         public string? Allergies { get; set; }
     }
 }
+
+

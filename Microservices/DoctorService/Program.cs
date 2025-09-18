@@ -1,6 +1,12 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using DoctorService.Data;
+using Microsoft.EntityFrameworkCore;
+using DoctorService.Repositories;
+using DoctorService.Services;
+using DoctorService.Models.Entities;
+using DoctorService.Mappings;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,6 +14,20 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+// Database Configuration
+builder.Services.AddDbContext<HospitalDbContext>(options =>
+    options.UseMySql(builder.Configuration.GetConnectionString("DefaultConnection"),
+    new MySqlServerVersion(new Version(9, 4, 0))));
+
+// Repository Registration
+builder.Services.AddScoped<IRepository<Doctor>, Repository<Doctor>>();
+
+// Service Registration
+builder.Services.AddScoped<IDoctorService, DoctorService.Services.DoctorService>();
+
+// AutoMapper Configuration
+builder.Services.AddAutoMapper(typeof(MappingProfile));
 
 // JWT Authentication Configuration
 var jwtSettings = builder.Configuration.GetSection("JWT");
@@ -52,5 +72,12 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
+
+// Ensure database is created
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<HospitalDbContext>();
+    await context.Database.EnsureCreatedAsync();
+}
 
 app.Run();

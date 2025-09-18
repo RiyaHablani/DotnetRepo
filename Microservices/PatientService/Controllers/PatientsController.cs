@@ -90,6 +90,14 @@ namespace PatientService.Controllers
             return NoContent();
         }
 
+        // GET: api/patients/test
+        [HttpGet("test")]
+        [AllowAnonymous] // Allow access without authentication
+        public IActionResult Test()
+        {
+            return Ok(new { message = "Patient service is working", timestamp = DateTime.UtcNow });
+        }
+
         // Helper methods
         private string GetUserRole()
         {

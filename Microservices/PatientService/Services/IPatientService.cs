@@ -11,3 +11,5 @@ namespace PatientService.Services
         Task<bool> DeletePatientAsync(int id);
     }
 }
+
+

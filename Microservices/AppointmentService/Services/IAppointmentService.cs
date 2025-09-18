@@ -9,5 +9,12 @@ namespace AppointmentService.Services
         Task<AppointmentDto> CreateAppointmentAsync(CreateAppointmentDto createDto);
         Task<AppointmentDto?> UpdateAppointmentAsync(int id, UpdateAppointmentDto updateDto);
         Task<bool> DeleteAppointmentAsync(int id);
+        Task<bool> CancelAppointmentAsync(int id);
+        Task<IEnumerable<AppointmentDto>> GetAppointmentsByDoctorAsync(int doctorId, DateTime? date = null);
+        Task<IEnumerable<AppointmentDto>> GetAppointmentsByPatientAsync(int patientId);
+        Task<IEnumerable<DateTime>> GetAvailableTimeSlotsAsync(int doctorId, DateTime date, int duration = 30);
+        Task<bool> IsDoctorAvailableAsync(int doctorId, DateTime appointmentDate, int duration, int? excludeAppointmentId = null);
     }
 }
+
+

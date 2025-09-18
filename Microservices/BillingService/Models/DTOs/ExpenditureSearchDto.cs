@@ -10,3 +10,5 @@ namespace BillingService.Models.DTOs
         public decimal? MaxAmount { get; set; }
     }
 }
+
+

@@ -20,7 +20,11 @@ builder.Services.AddSwaggerGen();
 // Database Configuration
 builder.Services.AddDbContext<PharmacyDbContext>(options =>
     options.UseMySql(builder.Configuration.GetConnectionString("DefaultConnection"),
-    new MySqlServerVersion(new Version(8, 0, 0))));
+    new MySqlServerVersion(new Version(8, 0, 0)),
+    mySqlOptions => mySqlOptions.EnableRetryOnFailure(
+        maxRetryCount: 3,
+        maxRetryDelay: TimeSpan.FromSeconds(30),
+        errorNumbersToAdd: null)));
 
 // JWT Authentication Configuration
 var jwtSettings = builder.Configuration.GetSection("JWT");
@@ -68,6 +72,21 @@ builder.Services.AddScoped<IPrescriptionService, PrescriptionService>();
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 
 var app = builder.Build();
+
+// Seed database (temporarily disabled for debugging)
+try
+{
+    using (var scope = app.Services.CreateScope())
+    {
+        var context = scope.ServiceProvider.GetRequiredService<PharmacyDbContext>();
+        await DbSeeder.SeedAsync(context);
+    }
+}
+catch (Exception ex)
+{
+    Console.WriteLine($"⚠️ Database seeding failed: {ex.Message}");
+    Console.WriteLine("🔄 Continuing without seeding...");
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

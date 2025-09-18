@@ -15,3 +15,5 @@ namespace PharmacyService.Repositories
         Task<bool> ExistsAsync(Expression<Func<T, bool>> predicate);
     }
 }
+
+

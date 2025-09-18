@@ -9,3 +9,5 @@ namespace AuthService.Models.DTOs
         public string Email { get; set; } = string.Empty;
     }
 }
+
+

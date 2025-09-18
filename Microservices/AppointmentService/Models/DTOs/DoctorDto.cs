@@ -8,3 +8,5 @@ namespace AppointmentService.Models.DTOs
         public bool IsActive { get; set; }
     }
 }
+
+

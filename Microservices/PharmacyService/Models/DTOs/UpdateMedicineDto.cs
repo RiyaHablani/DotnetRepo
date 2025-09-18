@@ -36,3 +36,4 @@ namespace PharmacyService.Models.DTOs
         public string? DosageStrength { get; set; }
     }
 }
+

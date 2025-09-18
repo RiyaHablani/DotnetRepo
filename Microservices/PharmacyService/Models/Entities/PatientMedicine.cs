@@ -41,3 +41,4 @@ namespace PharmacyService.Models.Entities
         public Medicine Medicine { get; set; } = null!;
     }
 }
+

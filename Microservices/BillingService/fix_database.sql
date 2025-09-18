@@ -1,8 +1,5 @@
--- Create database if it doesn't exist
-CREATE DATABASE IF NOT EXISTS HospitalBilling;
-
--- Use the database
-USE HospitalBilling;
+-- Use the existing database
+USE mydb;
 
 -- Create Transactions table
 CREATE TABLE IF NOT EXISTS Transactions (
@@ -58,3 +55,5 @@ CREATE TABLE IF NOT EXISTS Invoices (
     INDEX idx_status (Status),
     INDEX idx_invoice_date (InvoiceDate)
 );
+
+

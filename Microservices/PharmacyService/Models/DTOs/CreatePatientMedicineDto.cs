@@ -24,3 +24,4 @@ namespace PharmacyService.Models.DTOs
         public string? Duration { get; set; }
     }
 }
+

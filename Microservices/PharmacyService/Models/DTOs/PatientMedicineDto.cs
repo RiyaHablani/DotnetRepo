@@ -15,3 +15,4 @@ namespace PharmacyService.Models.DTOs
         public DateTime UpdatedAt { get; set; }
     }
 }
+

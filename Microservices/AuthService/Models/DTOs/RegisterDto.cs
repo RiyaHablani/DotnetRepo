@@ -22,3 +22,5 @@ namespace AuthService.Models.DTOs
         public string Role { get; set; } = string.Empty;
     }
 }
+
+

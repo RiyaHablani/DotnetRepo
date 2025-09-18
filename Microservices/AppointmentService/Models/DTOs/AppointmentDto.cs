@@ -1,3 +1,5 @@
+using AppointmentService.Models.Enums;
+
 namespace AppointmentService.Models.DTOs
 {
     public class AppointmentDto
@@ -10,7 +12,9 @@ namespace AppointmentService.Models.DTOs
         public string DoctorSpecialization { get; set; } = string.Empty;
         public DateTime AppointmentDate { get; set; }
         public int Duration { get; set; }
-        public string Status { get; set; } = string.Empty;
+        public AppointmentStatus Status { get; set; }
         public DateTime CreatedAt { get; set; }
     }
 }
+
+

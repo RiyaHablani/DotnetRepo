@@ -89,3 +89,5 @@ INSERT INTO PatientMedicines (PrescriptionId, MedicineId, Quantity, Instructions
 (3, 1, 20, 'Take as needed for pain', '1-2 tablets', 'Every 6 hours', '7 days', NOW(), NOW(), FALSE);
 
 COMMIT;
+
+

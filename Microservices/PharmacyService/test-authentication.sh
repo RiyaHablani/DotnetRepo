@@ -107,3 +107,5 @@ make_request "PUT" "/api/prescriptions/1/status" '{
 echo -e "\n"
 
 echo "=== Test completed ==="
+
+

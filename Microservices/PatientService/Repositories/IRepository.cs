@@ -10,3 +10,5 @@ namespace PatientService.Repositories
         Task<bool> ExistsAsync(int id);
     }
 }
+
+

@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using AppointmentService.Models.Enums;
 
 namespace AppointmentService.Models.Entities
 {
@@ -19,8 +20,7 @@ namespace AppointmentService.Models.Entities
         public int Duration { get; set; }
         
         [Required]
-        [MaxLength(20)]
-        public string Status { get; set; } = "Scheduled";
+        public AppointmentStatus Status { get; set; } = AppointmentStatus.Scheduled;
         
         [Required]
         public DateTime CreatedAt { get; set; }
@@ -32,3 +32,5 @@ namespace AppointmentService.Models.Entities
         public bool IsDeleted { get; set; } = false;
     }
 }
+
+

@@ -12,3 +12,5 @@ namespace AuthService.Models.DTOs
         public string Password { get; set; } = string.Empty;
     }
 }
+
+

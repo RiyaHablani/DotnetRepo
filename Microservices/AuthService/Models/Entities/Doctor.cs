@@ -28,3 +28,5 @@ namespace AuthService.Models.Entities
         public DateTime UpdatedAt { get; set; }
     }
 }
+
+

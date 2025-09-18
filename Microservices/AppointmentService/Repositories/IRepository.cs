@@ -10,3 +10,5 @@ namespace AppointmentService.Repositories
         Task<bool> ExistsAsync(int id);
     }
 }
+
+

@@ -38,3 +38,5 @@ namespace BillingService.Models.Entities
         public bool IsDeleted { get; set; } = false;
     }
 }
+
+

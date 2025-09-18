@@ -10,3 +10,5 @@ namespace AuthService.Models.Enums
         NoShow = 6
     }
 }
+
+
